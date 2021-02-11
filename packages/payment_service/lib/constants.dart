@@ -4,11 +4,6 @@ const kPrimaryColor = Color(0xFFFD5739);
 const kBorderColor = Color(0xFFE4E4E4);
 const kInputBbColor = Color(0xFFF5F5F5);
 const kLabelColor = Color(0xFF24253D);
-const kPrimaryGradientColor = LinearGradient(
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-  colors: [Color(0xFFFFA53E), Color(0xFFFF7643)],
-);
 
 final otpInputDecoration = InputDecoration(
     contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 14),

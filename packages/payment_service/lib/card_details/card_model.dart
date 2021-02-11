@@ -10,24 +10,18 @@ String cardModelToJson(CardModel data) => json.encode(data.toJson());
 
 class CardModel {
   CardModel({
-    this.currencyCode,
-    this.value,
     this.pan,
     this.expiry,
     this.cvv,
     this.cardholderName,
   });
 
-  String currencyCode;
-  int value;
   String pan;
   String expiry;
   String cvv;
   String cardholderName;
 
   factory CardModel.fromJson(Map<String, dynamic> json) => CardModel(
-        currencyCode: json["currencyCode"],
-        value: json["value"],
         pan: json["pan"],
         expiry: json["expiry"],
         cvv: json["cvv"],
@@ -35,8 +29,6 @@ class CardModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "currencyCode": currencyCode,
-        "value": value,
         "pan": pan,
         "expiry": expiry,
         "cvv": cvv,
