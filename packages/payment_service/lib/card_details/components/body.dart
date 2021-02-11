@@ -47,7 +47,8 @@ class _CreditCardFormState extends State<CreditCardForm> {
 
   Future<String> postData(
       String pan, String expiry, String cvv, String cardholderName) async {
-    final String pathUrl = 'http://localhost:8000/api/ngenius_payment_init';
+    final String pathUrl =
+        'http://dockerflight.uaenorth.azurecontainer.io:8000/api/ngenius_payment_init';
     dynamic data = {
       "currencyCode": "AED",
       "value": 10,
@@ -65,7 +66,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
 
   Future authenticate3ds() async {
     final String pathUrl =
-        'http://localhost:8000/api/ngenius_payment_authenticate3ds';
+        'http://dockerflight.uaenorth.azurecontainer.io:8000/api/ngenius_payment_authenticate3ds';
     var response = await Dio().post(pathUrl,
         data: _card,
         options: Options(headers: {'Content-type': 'application/json'}));
