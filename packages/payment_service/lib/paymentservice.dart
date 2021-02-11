@@ -1,8 +1,7 @@
 library paymentservice;
 
 import 'package:flutter/material.dart';
-
-import 'components/body.dart';
+import 'package:payment_service/components/body.dart';
 
 /// A Calculator.
 class PaymentService extends StatelessWidget {

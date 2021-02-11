@@ -125,10 +125,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
           child: DefaultButton(
             text: 'Continue',
             press: () {
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => new CardDetailsScreen()));
+              Navigator.pushNamed(context, '/congrats');
             },
           ),
         ),

@@ -1,9 +1,8 @@
 import '../../constants.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import '../../default_button.dart';
-import 'dart:async';
 
 class Body extends StatelessWidget {
   @override
@@ -25,7 +24,6 @@ class CreditCardForm extends StatefulWidget {
 }
 
 class _CreditCardFormState extends State<CreditCardForm> {
-  Timer _timer;
   dynamic _card, _authenticated;
   bool isCardDetailsVisible = true;
   String _cardnumber;
@@ -45,16 +43,15 @@ class _CreditCardFormState extends State<CreditCardForm> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<String> postData(
-      String pan, String expiry, String cvv, String cardholderName) async {
-    final String pathUrl = 'http://localhost:8000/api/ngenius_payment_init';
+  Future postData() async {
+    final String pathUrl = 'http://localhost:8000/api/PaymentInit';
     dynamic data = {
       "currencyCode": "AED",
       "value": 10,
-      "pan": pan,
-      "expiry": expiry,
-      "cvv": cvv,
-      "cardholderName": cardholderName
+      "pan": "4111111111111111",
+      "expiry": "2025-04",
+      "cvv": "123",
+      "cardholderName": "John Brown"
     };
 
     var response = await Dio().post(pathUrl,
@@ -64,8 +61,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
   }
 
   Future authenticate3ds() async {
-    final String pathUrl =
-        'http://localhost:8000/api/ngenius_payment_authenticate3ds';
+    final String pathUrl = 'http://localhost:8000/api/Authenticate3ds';
     var response = await Dio().post(pathUrl,
         data: _card,
         options: Options(headers: {'Content-type': 'application/json'}));
@@ -169,7 +165,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
+                        children: [
                           Center(child: CircularProgressIndicator()),
                           SizedBox(
                             height: 20,
@@ -179,7 +175,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
                       ),
                     )
                   : Column(
-                      children: <Widget>[
+                      children: [
                         Text(
                           "Enter Credit Card Details",
                           style: TextStyle(
@@ -207,7 +203,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
                           height: MediaQuery.of(context).size.height * 0.05,
                         ),
                         Row(
-                          children: <Widget>[
+                          children: [
                             Checkbox(
                                 value: rememberCard,
                                 onChanged: (value) {
@@ -246,13 +242,11 @@ class _CreditCardFormState extends State<CreditCardForm> {
                                   cardExpiryDateController.text;
                               final String cvv = cardCvvController.text;
 
-                              dynamic data = await postData(
-                                      pan, expiry, cvv, cardholderName)
-                                  .then((value) => value);
+                              dynamic data =
+                                  await postData().then((value) => value);
                               setState(() {
-                                final body = json.decode(data);
-                                _card = body;
-                                print(_card['md']);
+                                print(data);
+                                _card = data;
                                 isLoaderVisible = false;
                               });
 
@@ -274,12 +268,9 @@ class _CreditCardFormState extends State<CreditCardForm> {
                       authenticate3ds();
                       dynamic dataAuthenticated =
                           await authenticate3ds().then((value) => value);
-
                       setState(() {
-                        final authData = json.decode(dataAuthenticated);
-                        _authenticated = authData;
-                        // print('posting data 3ds');
-                        // print(_authenticated['state']);
+                        _authenticated = dataAuthenticated;
+                        print('posting data 3ds');
                       });
                     },
                   ),
@@ -290,7 +281,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
+                        children: [
                           Center(child: CircularProgressIndicator()),
                           SizedBox(
                             height: 20,
@@ -300,43 +291,14 @@ class _CreditCardFormState extends State<CreditCardForm> {
                       ),
                     )
                   : Container()
-              : _authenticated['state'] == 'CAPTURED' ||
-                      _authenticated['state'] == 'AUTHORISED'
-                  ? Navigation()
-                  : Text('Error')
+              : Center(
+                  child: Text(
+                  'Congratulations, your payment has been made!!',
+                  style: TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
+                )),
         ],
       ),
     );
-  }
-}
-
-class Navigation extends StatefulWidget {
-  Navigation({Key key}) : super(key: key);
-
-  @override
-  _NavigationState createState() => _NavigationState();
-}
-
-class _NavigationState extends State<Navigation> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(child: buildBody(context));
-  }
-
-  Widget buildBody(BuildContext context) {
-    return FutureBuilder(
-      future: _confirm(),
-      builder: (context, snapshot) {
-        return Center(child: CircularProgressIndicator());
-      },
-    );
-  }
-
-  Future<String> _confirm() async {
-    await Future.delayed(Duration.zero).then((value) {
-      Navigator.pushNamed(context, '/congrats');
-    });
-
-    return "Logined";
   }
 }
